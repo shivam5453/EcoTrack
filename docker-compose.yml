@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: ecotrack-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - ecotrack-db-data:/data/db
+    networks:
+      - ecotrack-network
+    restart: always
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: ecotrack-server
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongo:27017/ecotrack
+      - JWT_SECRET=ecotrack_jwt_access_secret_2026
+      - JWT_REFRESH_SECRET=ecotrack_jwt_refresh_secret_2026
+      - CLIENT_URL=http://localhost
+    depends_on:
+      - mongo
+    networks:
+      - ecotrack-network
+    restart: always
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: ecotrack-client
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - ecotrack-network
+    restart: always
+
+volumes:
+  ecotrack-db-data:
+
+networks:
+  ecotrack-network:
+    driver: bridge
