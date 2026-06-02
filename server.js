@@ -247,7 +247,7 @@ app.get('/api/profile/load', authenticateToken, async (req, res) => {
 });
 
 // Fallback index.html router for SPA direct load
-app.get('*', (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
