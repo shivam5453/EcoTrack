@@ -774,7 +774,7 @@ class UIController {
     // Async Event Handlers
     async handleRegister(e) {
         e.preventDefault();
-        const usernameInput = document.getElementById('register-username');
+        const emailInput = document.getElementById('register-email');
         const passwordInput = document.getElementById('register-password');
         const confirmInput = document.getElementById('register-confirm');
 
@@ -784,7 +784,7 @@ class UIController {
         }
 
         this.notifier.info("Creating account...");
-        const res = await this.auth.register(usernameInput.value, passwordInput.value);
+        const res = await this.auth.register(emailInput.value,passwordInput.value);
         if (res.success) {
             this.notifier.success(res.message);
             this.registerForm.reset();
