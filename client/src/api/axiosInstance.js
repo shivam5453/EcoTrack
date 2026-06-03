@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // Get backend server address from Vite environment variables or fallback
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  'https://ecotrack-backend-production-2fd0.up.railway.app/api';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
