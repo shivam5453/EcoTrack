@@ -795,12 +795,17 @@ class UIController {
     }
 
     async handleLogin(e) {
-        e.preventDefault();
-        const usernameInput = document.getElementById('login-username');
-        const passwordInput = document.getElementById('login-password');
+    e.preventDefault();
 
-        this.notifier.info("Signing in...");
-        const res = await this.auth.login(usernameInput.value, passwordInput.value);
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
+
+    this.notifier.info("Signing in...");
+
+    const res = await this.auth.login(
+        emailInput.value,
+        passwordInput.value
+    );
         if (res.success) {
             this.notifier.success(res.message);
             this.showScreenForUser(this.auth.getCurrentUser());
@@ -993,9 +998,9 @@ class App {
 
         try {
             // Check if backend API server is reachable
-            const isLocalFile = window.location.protocol === 'file:';
-            const pingUrl = isLocalFile ? 'http://localhost:5000/api/ping' : '/api/ping';
-            const apiBase = isLocalFile ? 'http://localhost:5000' : '';
+            const pingUrl ='https://ecotrack-backend-production-2fd0.up.railway.app/api/ping';
+
+            const apiBase ='https://ecotrack-backend-production-2fd0.up.railway.app';
 
             const pingPromise = fetch(pingUrl, { method: 'GET' });
             const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 1500));
