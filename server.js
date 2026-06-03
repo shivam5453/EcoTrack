@@ -131,41 +131,50 @@ app.get('/api/ping', (req, res) => {
 // User Registration Route
 app.post('/api/auth/register', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { name, email, password } = req.body;
 
-        if (!username || !password) {
-            return res.status(400).json({ success: false, message: 'Username and password are required.' });
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Name, email and password are required.'
+            });
         }
 
-        const normalizedUsername = username.trim().toLowerCase();
-        if (normalizedUsername.length < 3) {
-            return res.status(400).json({ success: false, message: 'Username must be at least 3 characters.' });
-        }
-        if (password.length < 4) {
-            return res.status(400).json({ success: false, message: 'Password must be at least 4 characters.' });
-        }
+        const normalizedEmail = email.trim().toLowerCase();
 
-        // Check if username already exists in database
-        const existingUser = await User.findOne({ username: normalizedUsername });
+        const existingUser = await User.findOne({
+            username: normalizedEmail
+        });
+
         if (existingUser) {
-            return res.status(400).json({ success: false, message: 'Username is already taken.' });
+            return res.status(400).json({
+                success: false,
+                message: 'Email is already registered.'
+            });
         }
 
-        // Hash password before saving to DB
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Save User
         const newUser = new User({
-            username: normalizedUsername,
+            username: normalizedEmail,
             password: hashedPassword
         });
 
         await newUser.save();
-        res.status(201).json({ success: true, message: 'Registration successful! You can now sign in.' });
+
+        res.status(201).json({
+            success: true,
+            message: 'Registration successful!'
+        });
+
     } catch (err) {
         console.error('Registration Error:', err);
-        res.status(500).json({ success: false, message: 'An internal server error occurred.' });
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
     }
 });
 
