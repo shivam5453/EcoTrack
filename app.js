@@ -200,40 +200,56 @@ class MongoApiStorageProvider extends StorageProvider {
         localStorage.removeItem(this.tokenKey);
     }
 
-    async registerUser(username, password) {
-        try {
-            const res = await fetch(`${this.baseUrl}/api/auth/register`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ username, password })
-            });
-            return await res.json();
-        } catch (err) {
-            console.error("API Register Connection Error:", err);
-            return { success: false, message: "Database connection failed. Please try again." };
-        }
+    async registerUser(email, password) {
+    try {
+        const res = await fetch(`${this.baseUrl}/api/auth/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: email,
+                email: email,
+                password: password
+            })
+        });
+        return await res.json();
+    } catch (err) {
+        console.error("API Register Connection Error:", err);
+        return {
+            success: false,
+            message: "Database connection failed. Please try again."
+        };
     }
+}
 
-    async authenticateUser(username, password) {
-        try {
-            const res = await fetch(`${this.baseUrl}/api/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ username, password })
-            });
-            const data = await res.json();
-            if (data.success) {
-                await this.saveSession(data.user.username, data.token);
-            }
-            return data;
-        } catch (err) {
-            console.error("API Login Connection Error:", err);
-            return { success: false, message: "Database connection failed. Please try again." };
+async authenticateUser(email, password) {
+    try {
+        const res = await fetch(`${this.baseUrl}/api/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                rememberMe: false
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            await this.saveSession(data.user.email, data.token);
         }
+
+        return data;
+    } catch (err) {
+        console.error("API Login Connection Error:", err);
+        return {
+            success: false,
+            message: "Database connection failed. Please try again."
+        };
     }
 }
 
