@@ -12,35 +12,37 @@ const generateTokens = (userId) => {
   return { accessToken, refreshToken };
 };
 
-// Helper to set httpOnly cookies on response
 const setAuthCookies = (res, accessToken, refreshToken, rememberMe = false) => {
   const secure = process.env.NODE_ENV === 'production';
-  
-  // Access Token Cookie (always 15 minutes)
+
   const accessOptions = [
     `access_token=${accessToken}`,
     'HttpOnly',
     'Path=/',
-    'Max-Age=900', // 15 minutes
-    'SameSite=Lax'
+    'Max-Age=900',
+    'SameSite=None'
   ];
+
   if (secure) accessOptions.push('Secure');
-  
-  // Refresh Token Cookie (expires in 7 days if rememberMe, otherwise a session cookie)
+
   const refreshOptions = [
     `refresh_token=${refreshToken}`,
     'HttpOnly',
     'Path=/',
-    'SameSite=Lax'
+    'SameSite=None'
   ];
+
   if (rememberMe) {
-    refreshOptions.push(`Max-Age=${7 * 24 * 60 * 60}`); // 7 days
+    refreshOptions.push(`Max-Age=${7 * 24 * 60 * 60}`);
   }
+
   if (secure) refreshOptions.push('Secure');
 
-  res.setHeader('Set-Cookie', [accessOptions.join('; '), refreshOptions.join('; ')]);
+  res.setHeader('Set-Cookie', [
+    accessOptions.join('; '),
+    refreshOptions.join('; ')
+  ]);
 };
-
 /**
  * @desc    Register a new user
  * @route   POST /api/auth/register
@@ -144,8 +146,8 @@ const logout = async (req, res, next) => {
   try {
     // Clear authorization cookies by setting Max-Age=0
     res.setHeader('Set-Cookie', [
-      'access_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax',
-      'refresh_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax'
+      'access_token=; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure',
+      'refresh_token=; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure'
     ]);
 
     res.status(200).json({
@@ -209,8 +211,8 @@ const refresh = async (req, res, next) => {
     });
   } catch (error) {
     res.setHeader('Set-Cookie', [
-      'access_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax',
-      'refresh_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax'
+      'access_token=; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure',
+      'refresh_token=; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure'
     ]);
     return res.status(401).json({ success: false, message: 'Invalid or expired session. Please sign in again.' });
   }

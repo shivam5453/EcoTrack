@@ -227,6 +227,7 @@ async authenticateUser(email, password) {
     try {
         const res = await fetch(`${this.baseUrl}/api/auth/login`, {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -240,7 +241,7 @@ async authenticateUser(email, password) {
         const data = await res.json();
 
         if (data.success) {
-            await this.saveSession(data.user.email, data.token);
+            await this.saveSession(data.user.email);
         }
 
         return data;
@@ -249,9 +250,19 @@ async authenticateUser(email, password) {
         return {
             success: false,
             message: "Database connection failed. Please try again."
-        };
+            };
+        }
     }
 }
+
+// ============================================================================
+// 2. AUTHENTICATION & SESSION SERVICE (SRP)
+// ============================================================================
+
+/**
+ * AuthManager (Single Responsibility: User Authentication & Sessions)
+ * Now fully async and storage-agnostic.
+ */
 
 // ============================================================================
 // 2. AUTHENTICATION & SESSION SERVICE (SRP)
