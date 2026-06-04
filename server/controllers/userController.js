@@ -85,7 +85,7 @@ const updateProfile = async (req, res, next) => {
  */
 const updateSettings = async (req, res, next) => {
   try {
-    const { theme, units, notifications } = req.body;
+    const { theme, units, notifications, goal, adoptedTips } = req.body;
     const user = await User.findById(req.user._id);
 
     if (!user) {
@@ -95,6 +95,8 @@ const updateSettings = async (req, res, next) => {
     if (theme) user.settings.theme = theme;
     if (units) user.settings.units = units;
     if (notifications !== undefined) user.settings.notifications = notifications;
+    if (goal !== undefined) user.settings.goal = goal;
+    if (adoptedTips !== undefined) user.settings.adoptedTips = adoptedTips;
 
     const updatedUser = await user.save();
 

@@ -47,7 +47,12 @@ const CarbonEntrySchema = new mongoose.Schema({
   breakdown: {
     scope1: { type: Number, required: true },
     scope2: { type: Number, required: true },
-    scope3: { type: Number, required: true }
+    scope3: { type: Number, required: true },
+    transport: { type: Number, default: 0 },
+    energy: { type: Number, default: 0 },
+    diet: { type: Number, default: 0 },
+    food: { type: Number, default: 0 },
+    shopping: { type: Number, default: 0 }
   },
   totalKg: {
     type: Number,

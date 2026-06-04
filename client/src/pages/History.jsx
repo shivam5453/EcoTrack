@@ -5,7 +5,7 @@ import useAuth from '../hooks/useAuth';
 import useCarbon from '../hooks/useCarbon';
 import { formatCarbonValue, formatDate } from '../utils/formatters';
 import { getGradeMeta } from '../utils/grading';
-import { generatePDFReport } from '../utils/PDFReport';
+import { generateCarbonReport } from '../utils/generatePDF';
 import SkeletonLoader from '../components/SkeletonLoader';
 
 export const History = () => {
@@ -36,7 +36,7 @@ export const History = () => {
   };
 
   const handleDownloadPDF = (entry) => {
-    generatePDFReport(entry, user);
+    generateCarbonReport(entry, user?.name || 'You');
   };
 
   // Helper to get scope values, gracefully handling legacy records

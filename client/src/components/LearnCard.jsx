@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Leaf } from 'lucide-react';
+import useAuth from '../hooks/useAuth';
 
 const DIFFICULTY_COLORS = {
   easy: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
@@ -13,8 +14,24 @@ const DIFFICULTY_LABELS = {
   hard: '🔴 Hard',
 };
 
-export const LearnCard = ({ title, description, difficulty = 'medium', savingKg, icon: Icon, tips = [] }) => {
+export const LearnCard = ({ id, title, description, difficulty = 'medium', savingKg, icon: Icon, tips = [] }) => {
   const [expanded, setExpanded] = useState(false);
+  const { user, updateSettings } = useAuth();
+  
+  const adoptedTips = user?.settings?.adoptedTips || [];
+  const isAdopted = adoptedTips.includes(String(id));
+
+  const handleToggleAdopt = async () => {
+    if (!user) return;
+    let updated;
+    const strId = String(id);
+    if (isAdopted) {
+      updated = adoptedTips.filter(tId => tId !== strId);
+    } else {
+      updated = [...adoptedTips, strId];
+    }
+    await updateSettings({ adoptedTips: updated });
+  };
 
   return (
     <div className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-800/50 transition-all duration-300">
@@ -35,6 +52,19 @@ export const LearnCard = ({ title, description, difficulty = 'medium', savingKg,
             </p>
           </div>
         </div>
+
+        {/* Adopt Checklist Toggle */}
+        {user && (
+          <label className="flex items-center gap-1 cursor-pointer select-none text-[10px] font-black text-slate-400 dark:text-slate-550 uppercase shrink-0 pt-0.5">
+            <input
+              type="checkbox"
+              checked={isAdopted}
+              onChange={handleToggleAdopt}
+              className="h-3.5 w-3.5 rounded border-slate-350 dark:border-slate-700 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+            />
+            <span>{isAdopted ? 'Adopted' : 'Adopt'}</span>
+          </label>
+        )}
       </div>
 
       {/* Badges */}

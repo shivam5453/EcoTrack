@@ -13,6 +13,14 @@ const axiosInstance = axios.create({
   }
 });
 
+// Attach credentials configuration to all outgoing requests
+axiosInstance.interceptors.request.use(config => {
+  // JWT is in httpOnly cookie — it's sent automatically
+  // If using localStorage instead, add: config.headers.Authorization = `Bearer ${token}`
+  config.withCredentials = true;
+  return config;
+});
+
 // Automatic response interceptor for token refresh handling
 axiosInstance.interceptors.response.use(
   (response) => response,

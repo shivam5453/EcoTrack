@@ -10,7 +10,7 @@ const CATEGORIES = [
   { id: 'waste', label: 'Waste', icon: Recycle, color: 'text-rose-500' },
 ];
 
-const TECHNIQUES = [
+export const TECHNIQUES = [
   // Energy (5)
   { id: 1, category: 'energy', title: 'Switch to LED Lighting', description: 'Replace all incandescent bulbs with LED alternatives — they use 75% less energy and last 25x longer.', difficulty: 'easy', savingKg: 150, icon: Zap, tips: ['Start with rooms you use most', 'Look for 3000K warm white for living areas', 'Buy in bulk for savings'] },
   { id: 2, category: 'energy', title: 'Install a Smart Thermostat', description: 'Automatically optimizes heating and cooling based on your schedule, cutting HVAC energy waste.', difficulty: 'medium', savingKg: 400, icon: Home, tips: ['Set schedules for sleep and away times', 'Use geofencing to auto-adjust when you leave', 'Lower setpoint by 2°F in winter'] },
@@ -109,6 +109,7 @@ export const Learn = () => {
         {filteredTechniques.map((technique) => (
           <LearnCard
             key={technique.id}
+            id={technique.id}
             title={technique.title}
             description={technique.description}
             difficulty={technique.difficulty}

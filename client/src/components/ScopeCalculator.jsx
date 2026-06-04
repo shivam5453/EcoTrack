@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Info, Save, Download, ArrowRight, Activity, Zap, ShoppingBag } from 'lucide-react';
-import { generatePDFReport } from '../utils/PDFReport';
+import { generateCarbonReport } from '../utils/generatePDF';
+import useAuth from '../hooks/useAuth';
 import api from '../api/axiosInstance';
 
 const COLORS = ['#1e3a5f', '#0d9488', '#d97706']; // Navy, Teal, Amber
 
 export const ScopeCalculator = () => {
   const navigate = useNavigate();
+  const { user, showToast } = useAuth();
   const [activeTab, setActiveTab] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -122,28 +124,34 @@ export const ScopeCalculator = () => {
     try {
       setIsSaving(true);
       const res = await api.post('/carbon/save', {
-        reportTitle: `Carbon Report ${new Date().toLocaleDateString()}`,
+        reportTitle: `Carbon Report ${new Date().toLocaleDateString('en-IN')}`,
         scope1, scope2, scope3
       });
-      navigate('/history');
+      if (res.data.success) {
+        showToast('Calculation saved ✓', 'success');
+        navigate('/history');
+      }
     } catch (err) {
-      setError('Failed to save calculation.');
+      if (err.response?.status === 401) {
+        showToast('Failed to save — please log in', 'error');
+      } else {
+        showToast(err.response?.data?.message || 'Failed to save calculation.', 'error');
+      }
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDownload = () => {
-    // Generate dummy entry for PDF
     const entry = {
       date: new Date(),
-      reportTitle: `Carbon Report ${new Date().toLocaleDateString()}`,
+      reportTitle: `Carbon Report ${new Date().toLocaleDateString('en-IN')}`,
       breakdown: { scope1: results.scope1, scope2: results.scope2, scope3: results.scope3 },
       totalKg: results.totalKg,
       grade: results.grade,
-      tips: [] // Can be filled in
+      tips: []
     };
-    generatePDFReport(entry, { name: 'You' });
+    generateCarbonReport(entry, user?.name || 'You');
   };
 
   const getFeedback = () => {

@@ -8,17 +8,20 @@ import {
   Legend, 
   Tooltip 
 } from 'recharts';
-import { Bookmark, RefreshCw, Globe, Flame, Lightbulb, Compass, Award } from 'lucide-react';
+import { Bookmark, RefreshCw, Globe, Flame, Lightbulb, Compass, Award, Download } from 'lucide-react';
 import useAuth from '../hooks/useAuth';
 import useCarbon from '../hooks/useCarbon';
 import GradeCircle from '../components/GradeCircle';
 import TipCard from '../components/TipCard';
+import TreeOffset from '../components/TreeOffset';
+import api from '../api/axiosInstance';
+import { generateCarbonReport } from '../utils/generatePDF';
 import { formatCarbonValue } from '../utils/formatters';
 
 export const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, showToast } = useAuth();
   const { saveFootprint, loading } = useCarbon();
 
   // Retrieve calculated results from React Router state
@@ -41,11 +44,34 @@ export const Results = () => {
   ].filter((d) => d.value > 0); // Ignore empty categories
 
   const handleSave = async () => {
-    // Save entry to backend history
-    const res = await saveFootprint(inputs);
-    if (res.success) {
-      navigate('/dashboard', { replace: true });
+    try {
+      const res = await api.post('/carbon/save', {
+        reportTitle: `Carbon Report ${new Date().toLocaleDateString('en-IN')}`,
+        scope1: inputs.scope1,
+        scope2: inputs.scope2,
+        scope3: inputs.scope3
+      });
+      if (res.data.success) {
+        showToast('Calculation saved ✓', 'success');
+        navigate('/dashboard', { replace: true });
+      }
+    } catch (err) {
+      if (err.response?.status === 401) {
+        showToast('Failed to save — please log in', 'error');
+      } else {
+        showToast(err.response?.data?.message || 'Failed to save calculation.', 'error');
+      }
     }
+  };
+
+  const handleDownload = () => {
+    const entry = {
+      date: new Date(),
+      grade,
+      totalKg,
+      breakdown
+    };
+    generateCarbonReport(entry, user?.name || 'You');
   };
 
   const worldAvg = 4000;
@@ -141,6 +167,9 @@ export const Results = () => {
 
       </div>
 
+      {/* Carbon Offset trees equivalent representation */}
+      <TreeOffset totalKg={totalKg} />
+
       {/* 3. Global Benchmarks Averages */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
         <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
@@ -206,6 +235,14 @@ export const Results = () => {
         >
           <RefreshCw size={14} /> Adjust inputs & Recalculate
         </Link>
+
+        {/* Download PDF */}
+        <button
+          onClick={handleDownload}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-350 font-black text-xs transition-all cursor-pointer"
+        >
+          <Download size={14} /> Download PDF Report
+        </button>
 
         {/* Save to History */}
         <button

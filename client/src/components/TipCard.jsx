@@ -19,6 +19,7 @@ import {
   TrendingDown
 } from 'lucide-react';
 import { capitalize } from '../utils/formatters';
+import useAuth from '../hooks/useAuth';
 
 // Map icon string to Lucide component
 const IconMapper = {
@@ -46,6 +47,20 @@ const IconMapper = {
  */
 export const TipCard = ({ tip }) => {
   const { category, title, description, estimatedSavingKg, effortLevel, icon, tags = [] } = tip;
+  const { user, updateSettings } = useAuth();
+  const adoptedTips = user?.settings?.adoptedTips || [];
+  const isAdopted = adoptedTips.includes(tip.id);
+
+  const handleToggleAdopt = async () => {
+    if (!user) return;
+    let updated;
+    if (isAdopted) {
+      updated = adoptedTips.filter(id => id !== tip.id);
+    } else {
+      updated = [...adoptedTips, tip.id];
+    }
+    await updateSettings({ adoptedTips: updated });
+  };
 
   const TargetIcon = IconMapper[icon] || Leaf;
 
@@ -93,28 +108,41 @@ export const TipCard = ({ tip }) => {
       bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800
     `}>
       {/* Top Section: Category & Icon */}
-      <div className="flex items-start gap-4">
-        
-        {/* Animated Icon Housing */}
-        <div className={`p-3 rounded-2xl border ${currentTheme.bgColor} ${currentTheme.borderColor} ${currentTheme.iconColor} shrink-0`}>
-          <TargetIcon size={20} className="stroke-[2.5]" />
-        </div>
-
-        {/* Title & Category Info */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${currentTheme.pillColor}`}>
-              {category}
-            </span>
-            <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${effortClass}`}>
-              {effortLevel} effort
-            </span>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          {/* Animated Icon Housing */}
+          <div className={`p-3 rounded-2xl border ${currentTheme.bgColor} ${currentTheme.borderColor} ${currentTheme.iconColor} shrink-0`}>
+            <TargetIcon size={20} className="stroke-[2.5]" />
           </div>
-          <h4 className="text-sm font-black text-slate-900 dark:text-white leading-tight">
-            {title}
-          </h4>
+
+          {/* Title & Category Info */}
+          <div className="space-y-1">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${currentTheme.pillColor}`}>
+                {category}
+              </span>
+              <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${effortClass}`}>
+                {effortLevel} effort
+              </span>
+            </div>
+            <h4 className="text-sm font-black text-slate-900 dark:text-white leading-tight">
+              {title}
+            </h4>
+          </div>
         </div>
 
+        {/* Adopt Toggle Checkbox */}
+        {user && (
+          <label className="flex items-center gap-1 cursor-pointer select-none text-[10px] font-black text-slate-400 dark:text-slate-550 uppercase shrink-0 pt-0.5">
+            <input
+              type="checkbox"
+              checked={isAdopted}
+              onChange={handleToggleAdopt}
+              className="h-3.5 w-3.5 rounded border-slate-350 dark:border-slate-700 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+            />
+            <span>{isAdopted ? 'Adopted' : 'Adopt'}</span>
+          </label>
+        )}
       </div>
 
       {/* Description */}

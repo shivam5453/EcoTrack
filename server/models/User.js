@@ -35,7 +35,12 @@ const UserSchema = new mongoose.Schema({
     notifications: {
       type: Boolean,
       default: true
-    }
+    },
+    goal: {
+      targetKg: { type: Number },
+      targetDate: { type: Date }
+    },
+    adoptedTips: [{ type: String }]
   }
 }, {
   timestamps: true

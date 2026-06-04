@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, ShieldAlert, Key, Trash2 } from 'lucide-react';
 import useAuth from '../hooks/useAuth';
+import useCarbon from '../hooks/useCarbon';
+import Badges from '../components/Badges';
 
 export const Profile = () => {
   const { user, updateProfile, deleteAccount, loading } = useAuth();
+  const { entries, fetchHistory } = useCarbon();
   const navigate = useNavigate();
 
   const [name, setName] = useState(user?.name || '');
@@ -15,6 +18,10 @@ export const Profile = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  useEffect(() => {
+    fetchHistory(1, 100).catch(() => {});
+  }, [fetchHistory]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -176,6 +183,11 @@ export const Profile = () => {
               </button>
             </div>
           </form>
+        </div>
+
+        {/* Achievements Section */}
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm">
+          <Badges history={entries} />
         </div>
 
         {/* Account Deletion Warning Area */}
