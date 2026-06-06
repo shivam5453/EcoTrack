@@ -20,7 +20,7 @@ const CarbonEntrySchema = new mongoose.Schema({
       motorbikeLitresWeek: { type: Number, required: true },
       gasKgMonth: { type: Number, required: true },
       oilLitresMonth: { type: Number, required: true },
-      generatorLitresMonth: { type: Number, required: true }
+      generatorLitresMonth: { type: Number, default : 0 }
     },
     scope2: {
       electricityKwhMonth: { type: Number, required: true },
@@ -28,21 +28,26 @@ const CarbonEntrySchema = new mongoose.Schema({
       districtHeatingKwhMonth: { type: Number, required: true }
     },
     scope3: {
-      shortFlightsYear: { type: Number, required: true },
-      longFlightsYear: { type: Number, required: true },
-      transitKmWeek: { type: Number, required: true },
-      taxiKmWeek: { type: Number, required: true },
-      meatFrequency: { type: String, enum: ['daily', 'weekly', 'rarely', 'vegan'], required: true },
-      dairyConsumption: { type: String, enum: ['high', 'medium', 'low', 'none'], required: true },
-      foodWaste: { type: String, enum: ['high', 'medium', 'low'], required: true },
-      localFoodPercent: { type: Number, required: true },
-      onlineOrdersMonth: { type: Number, required: true },
-      clothesYear: { type: Number, required: true },
-      electronicsYear: { type: Number, required: true },
-      furnitureYear: { type: Number, required: true },
-      wasteBagsWeek: { type: Number, required: true },
-      recyclingLevel: { type: String, enum: ['none', 'some', 'most', 'all'], required: true }
-    }
+  shortFlightsYear: { type: Number, required: true },
+  longFlightsYear: { type: Number, required: true },
+  transitKmWeek: { type: Number, required: true },
+
+  taxiKmWeek: { type: Number, default: 0 },
+
+  meatFrequency: { type: String, enum: ['daily', 'weekly', 'rarely', 'vegan'], required: true },
+  dairyConsumption: { type: String, enum: ['high', 'medium', 'low', 'none'], required: true },
+  foodWaste: { type: String, enum: ['high', 'medium', 'low'], required: true },
+  localFoodPercent: { type: Number, required: true },
+  onlineOrdersMonth: { type: Number, required: true },
+  clothesYear: { type: Number, required: true },
+
+  electronicsYear: { type: Number, default: 0 },
+
+  furnitureYear: { type: Number, default: 0 },
+
+  wasteBagsWeek: { type: Number, required: true },
+  recyclingLevel: { type: String, enum: ['none', 'some', 'most', 'all'], required: true }
+}
   },
   breakdown: {
     scope1: { type: Number, required: true },
