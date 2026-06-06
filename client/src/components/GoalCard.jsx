@@ -128,7 +128,7 @@ export const GoalCard = ({ latestEntry }) => {
               <span className="text-3xl">🎉</span>
               <h4 className="text-sm font-black text-emerald-800 dark:text-emerald-400">Goal Reached!</h4>
               <p className="text-xs text-slate-500 font-semibold leading-relaxed">
-                Outstanding! Your current footprint of <span className="font-extrabold">{currentScore.toLocaleString()} kg</span> is under your target of <span className="font-extrabold">{goal.targetKg.toLocaleString()} kg</span>. Keep it up!
+                Outstanding! Your current footprint of <span className="font-extrabold">{currentScore.toLocaleString()} kg</span> is under your target of <span className="font-extrabold">{(goal?.targetKg || 0).toLocaleString()} kg</span>. Keep it up!
               </p>
             </div>
           ) : (
@@ -136,7 +136,7 @@ export const GoalCard = ({ latestEntry }) => {
               <div className="flex justify-between items-end">
                 <div>
                   <span className="text-2xl font-black text-slate-850 dark:text-white">
-                    {goal.targetKg.toLocaleString()}
+                    {(goal?.targetKg || 0).toLocaleString()}
                   </span>
                   <span className="text-[10px] text-slate-400 font-bold ml-1 uppercase">kg CO₂/yr</span>
                 </div>
@@ -149,7 +149,7 @@ export const GoalCard = ({ latestEntry }) => {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] font-black uppercase text-slate-400">
                     <span>Current ({currentScore.toLocaleString()} kg)</span>
-                    <span>Target ({goal.targetKg.toLocaleString()} kg)</span>
+                    <span>Target ({(goal?.targetKg || 0).toLocaleString()} kg)</span>
                   </div>
                   {/* Progress Bar */}
                   <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">

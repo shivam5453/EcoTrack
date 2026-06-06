@@ -198,7 +198,7 @@ export const Dashboard = () => {
                 </div>
                 <div className="space-y-1">
                   <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                    {personalBest.totalKg.toLocaleString()} <span className="text-sm text-slate-400 font-bold">kg</span>
+                    {personalBest?.totalKg?.toLocaleString() || '0'} <span className="text-sm text-slate-400 font-bold">kg</span>
                   </div>
                   <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
                     Grade {personalBest.grade} • {new Date(personalBest.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
@@ -218,7 +218,7 @@ export const Dashboard = () => {
                 </div>
                 <div className="space-y-1">
                   <div className="text-2xl font-black text-rose-600 dark:text-rose-400">
-                    {personalWorst.totalKg.toLocaleString()} <span className="text-sm text-slate-400 font-bold">kg</span>
+                    {personalWorst?.totalKg?.toLocaleString() || '0'} <span className="text-sm text-slate-400 font-bold">kg</span>
                   </div>
                   <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">
                     Grade {personalWorst.grade} • {new Date(personalWorst.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
