@@ -44,6 +44,7 @@ export const Results = () => {
   ].filter((d) => d.value > 0); // Ignore empty categories
 
   const handleSave = async () => {
+    console.log("SAVE DATA:", inputs);
     try {
       const res = await api.post('/carbon/save', {
         reportTitle: `Carbon Report ${new Date().toLocaleDateString('en-IN')}`,
