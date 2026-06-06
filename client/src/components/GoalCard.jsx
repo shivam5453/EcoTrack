@@ -58,7 +58,10 @@ export const GoalCard = ({ latestEntry }) => {
   // If we decrease to 3000, we are 50% there).
   // Formula: progress = (Initial - Current) / (Initial - Target)
   // Since we don't have "Initial" easily, a standard percentage is: (Goal / Current) * 100, capped at 100
-  const progressPercent = currentScore > 0 ? Math.min(100, Math.round((goal?.targetKg / currentScore) * 100)) : 0;
+  const progressPercent =
+  currentScore > 0 && goal?.targetKg
+    ? Math.min(100, Math.round((goal.targetKg / currentScore) * 100))
+    : 0;
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex flex-col justify-between animate-[slideIn_0.6s_ease-out]">
@@ -141,7 +144,7 @@ export const GoalCard = ({ latestEntry }) => {
                   <span className="text-[10px] text-slate-400 font-bold ml-1 uppercase">kg CO₂/yr</span>
                 </div>
                 <div className="flex items-center gap-1 text-[10px] text-slate-405 font-bold uppercase">
-                  <Calendar size={12} /> {formatDate(goal.targetDate)}
+                  <Calendar size={12} /> {formatDate(goal?.targetDate)}
                 </div>
               </div>
 
