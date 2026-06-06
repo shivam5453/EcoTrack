@@ -80,6 +80,9 @@ export const Dashboard = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-12">
+    <h1 style={{color:"red",fontSize:"40px"}}>
+    TEST DEPLOYMENT
+    </h1>
       
       {/* SECTION 1 — Global Atmosphere Data */}
       <AtmosphereData />
